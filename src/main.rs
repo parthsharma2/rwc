@@ -4,7 +4,7 @@ use std::fs;
 #[derive(Parser)]
 #[command(version, about)]
 struct Args {
-    filename: String,
+    filenames: Vec<String>,
 
     #[arg(short='c', long=None, help="Print the byte count")]
     print_count: bool,
@@ -12,8 +12,16 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
+    let total_files = args.filenames.len();
+    let mut total_bytes: u64 = 0;
 
-    let metadata = fs::metadata(&args.filename).expect("Failed to read file metadata");
+    for filename in args.filenames {
+        let metadata = fs::metadata(&filename).expect("Failed to read file metadata");
+        total_bytes += metadata.len();
+        println!("{} {}", metadata.len(), filename);
+    }
 
-    println!("{} {}", metadata.len(), args.filename);
+    if total_files > 1 {
+        println!("{} total", total_bytes);
+    }
 }
