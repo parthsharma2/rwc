@@ -1,12 +1,19 @@
-use std::env;
+use clap::Parser;
 use std::fs;
 
+#[derive(Parser)]
+#[command(version, about)]
+struct Args {
+    filename: String,
+
+    #[arg(short='c', long=None, help="Print the byte count")]
+    print_count: bool,
+}
+
 fn main() {
-    let filename = env::args()
-        .nth_back(0)
-        .expect("Filename argument to be provided");
+    let args = Args::parse();
 
-    let metadata = fs::metadata(&filename).expect("Failed to read file metadata");
+    let metadata = fs::metadata(&args.filename).expect("Failed to read file metadata");
 
-    println!("{} {}", metadata.len(), filename);
+    println!("{} {}", metadata.len(), args.filename);
 }
